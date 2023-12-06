@@ -14,8 +14,10 @@ typedef struct {
 
 typedef tCase1 tGrille[TAILLE][TAILLE];
 
-void ajouterCandidats();
-void retirerCandidats();
+void ajouterCandidats(tCase1 *laCase, int val);
+void retirerCandidats(tCase1 *laCase, int val);
+bool estCandidat(tCase1 laCase, int val); 
+int nbCandidats(tCase1 laCase);
 void resultats();
 
 int main(){
