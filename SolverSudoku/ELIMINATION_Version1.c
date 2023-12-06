@@ -19,11 +19,15 @@ void retirerCandidats();
 void resultats();
 
 int main(){
-    
+    tCase1 case;
 }
 
 void ajouterCandidats(tCase1 case){
-    case.valeur 
+    if (case.valeur == 0)
+    {
+        /* code */
+    }
+     
 }
 
 
