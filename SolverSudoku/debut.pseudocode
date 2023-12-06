@@ -1,0 +1,124 @@
+programme solver c'est
+début
+    CONSTANTE entier TAILLE := 9;
+    typedef tcase1 c'est
+    debut
+        valeur : entier;
+        candidats : tableau[1..TAILLE] d'entier;
+        nbCandidats : entier;
+    fin
+    
+
+
+    procédure ajouterCandidat(entF/sortF laCase : tCase1,entF val:entier) c'est
+    debut
+        tcase1.nbCandidats := 0;
+        si (lacase.valeur != 0) alors
+            tcase1.candidats[nbCandidats] := val;
+            tcase1.nbCandidats = nbCandidats +1;  
+        sinon
+            écrireEcran("La case n'est pas vide");
+        finsi
+        
+
+    fin
+
+    procédure retirerCandidats(entF/sortF laCase : tCase1, entF val : entier) c'est 
+    debut
+        pour i de 1 à lacase.nbCandidats pas de 1 faire
+            si (lacase.candidats[i] == val && i < lacase.nbCandidats ) alors
+                lacase.candidats[i] = lacase.candidats[i+1];
+            sinonsi (i == lacase.nbCandidats)
+                lacase.candidats[i] = 0;
+            fin si
+        finfaire
+            
+        finsi
+        lacase.valeur := val;
+        lacase.candidats[valeur] := faux;
+    fin
+
+    fonction estCandidat(entF laCase : tCase, entF val : entier) delivre booléen c'est
+    début
+        present : booléen;
+
+        si (lacase.candidat[val] == vrai ) alors
+            present := vrai;  
+        sinon
+            present := vrai;
+        finsi
+
+        retourne present;
+    fin
+
+    fonction nbCandidat(entF laCase : tCase) delivre entier c'est
+    début
+        nbCandidats, i : entier;
+        i:=1;
+        nbCandidats := 0;
+        pour i de 1 à TAILLE pas de 1 faire
+           nbCandidats := nbCandidats + 1; 
+        finfaire
+
+        retourne nbCandidats;
+    fin
+    
+    
+    
+    /****************************************
+    *                   case 2              *
+    *****************************************/
+    
+
+
+    typedef tcase2 c'est
+    debut
+        valeur : entier;
+        candidats : tableau[1..TAILLE] de booléen;
+        nbCandidats : entier;
+    fin
+
+    procédure ajouterCandidat(entF/sortF laCase : tCase2,entF val:entier) c'est
+    debut
+        si (lacase.valeur != 0;) alors
+            lacase.candidats[val] := vrai;    
+        sinon
+            écrireEcran("case déjà rempli");
+        fin si
+            
+        
+        
+
+    fin
+
+    procédure retirerCandidats(entF/sortF laCase : tCase2, entF val : entier) c'est 
+    debut
+        lacase.valeur := val;
+        lacase.candidats[valeur] := faux;
+    fin
+
+    fonction estCandidat(entF laCase : tCase2, entF val : entier) delivre booléen c'est
+    début
+        present : booléen;
+
+        si (lacase.candidat[val] == vrai ) alors
+            present := vrai;  
+        sinon
+            present := vrai;
+        finsi
+
+        retourne present;
+    fin
+
+    fonction nbCandidat(entF laCase : tCase2) delivre entier c'est
+    début
+        nbCandidats, i : entier;
+        i:=1;
+        nbCandidats := 0;
+        pour i de 1 à TAILLE pas de 1 faire
+           nbCandidats := nbCandidats + 1; 
+        finfaire
+
+        retourne nbCandidats;
+    fin
+fin
