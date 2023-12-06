@@ -12,12 +12,32 @@ typedef struct {
     int nbCandidats;
 } tCase2;
 
-typedef tCase2 tGrille[TAILLE][TAILLE];
+typedef tCase2 tGrille[TAILLE];
 
 void resultat();
+void initTab(tCase2 case);
+void ajouterCandidats();
+void retirerCandidats();
 
 int main(){
+    tCase2 case;
+}
+void initCandidats(tCase2 case){
+    for (int i = 1; i <= TAILLE; i++)
+    {
+        case.candidats[i] = false;
+    }
+    
+}
 
+void ajouterCandidats(){
+    if ( case.valeur == 0)
+    {
+        /* code */
+    }else{
+        printf("Case rempli d'une vvaleur\n")
+    }
+    
 }
 
 void resultat(){
