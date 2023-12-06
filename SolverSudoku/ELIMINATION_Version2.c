@@ -16,7 +16,7 @@ typedef tCase2 tGrille[TAILLE];
 
 void resultat();
 void initTab(tCase2 case);
-void ajouterCandidats();
+void ajouterCandidats(int valeur);
 void retirerCandidats();
 
 int main(){
@@ -30,10 +30,10 @@ void initCandidats(tCase2 case){
     
 }
 
-void ajouterCandidats(){
+void ajouterCandidats(int valeur){
     if ( case.valeur == 0)
     {
-        /* code */
+        case.candidats[valeur] = true;
     }else{
         printf("Case rempli d'une vvaleur\n")
     }
