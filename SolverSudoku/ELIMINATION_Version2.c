@@ -15,27 +15,27 @@ typedef struct {
 typedef tCase2 tGrille[TAILLE];
 
 void resultat();
-void initTab(tCase2 case);
-void ajouterCandidats(int valeur);
+void initTab(tCase2 Case);
+void ajouterCandidats(tCase2 Case, int valeur);
 void retirerCandidats();
 
 int main(){
-    tCase2 case;
+    tCase2 Case;
 }
-void initCandidats(tCase2 case){
+void initTab(tCase2 Case){
     for (int i = 1; i <= TAILLE; i++)
     {
-        case.candidats[i] = false;
+        Case.candidats[i] = false;
     }
     
 }
 
-void ajouterCandidats(int valeur){
-    if ( case.valeur == 0)
+void ajouterCandidats(tCase2 Case, int valeur){
+    if ( Case.valeur == 0)
     {
-        case.candidats[valeur] = true;
+        Case.candidats[valeur] = true;
     }else{
-        printf("Case rempli d'une vvaleur\n")
+        printf("Case rempli d'une valeur\n");
     }
     
 }
