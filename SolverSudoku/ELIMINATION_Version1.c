@@ -5,6 +5,7 @@
 
 #define N 3
 #define TAILLE (N*N)
+typedef tCase tGrille[TAILLE][TAILLE];
 
 typedef struct {
     int valeur;
@@ -12,7 +13,7 @@ typedef struct {
     int nbCandidats;
 } tCase1;
 
-typedef tCase1 tGrille[TAILLE][TAILLE];
+
 
 void ajouterCandidats(tCase1 *laCase, int val);
 void retirerCandidats(tCase1 *laCase, int val);
@@ -21,15 +22,19 @@ int nbCandidats(tCase1 laCase);
 void resultats();
 
 int main(){
-    tCase1 case;
+    g tGrille;
+
 }
 
-void ajouterCandidats(tCase1 case){
-    if (case.valeur == 0)
+void ajouterCandidats(tCase1 *laCase, int val){
+    if (val == 0)
     {
-        /* code */
+        tCase1.candidats[nbCandidats] = val;
+        tCase1.nbCandidats = nbCandidats +1; 
+    }   
+    else{
+        printf("La case n'est pas vide")
     }
-     
 }
 
 
@@ -37,5 +42,5 @@ void ajouterCandidats(tCase1 case){
 void resultat(){
     printf("*********   RESULTATS POUR  ***********");
     printf("nombres de cases remplies = sur     Taux de remplissage =  ");
-    printf("nombres de candidats éliminé =      pourcentage de remplissage =  %");
+    printf("nombres de candidats éliminé =      pourcentage de remplissage =  ");
 }
