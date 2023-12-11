@@ -40,6 +40,14 @@ void ajouterCandidats(tCase2 Case, int valeur){
     
 }
 
+bool estCandidats(tGrille grille, case){
+    for (int i = 0; i < TAILLE; i++)
+    {
+        
+    }
+    
+}
+
 void resultat(){
     printf("*********   RESULTATS POUR  ***********");
     printf("nombres de cases remplies = sur     Taux de remplissage =  ");
