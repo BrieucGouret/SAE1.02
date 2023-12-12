@@ -12,10 +12,12 @@ typedef struct {
     int nbCandidats;
 } tCase2;
 
-typedef tCase2 tGrille[TAILLE];
+typedef int tGrille[TAILLE][TAILLE];
 
 void resultat();
 void initTab(tCase2 Case);
+void chargerGrille(tGrille grille);
+bool estCandidats(tGrille grille, int valeur );
 void ajouterCandidats(tCase2 Case, int valeur);
 void retirerCandidats();
 
@@ -31,6 +33,18 @@ void initTab(tCase2 Case){
 }
 
 void ajouterCandidats(tCase2 Case, int valeur){
+    for (int i = 0; i < TAILLE; i++)
+    {
+        for (int j = 0; j < TAILLE; j++)
+        {
+            /* code */
+        }
+        
+    }
+    
+    
+    
+    
     if ( Case.valeur == 0)
     {
         Case.candidats[valeur] = true;
@@ -40,11 +54,23 @@ void ajouterCandidats(tCase2 Case, int valeur){
     
 }
 
-bool estCandidats(tGrille grille, case){
+bool estCandidats(tGrille grille, int valeur ){
+    estCandidats = false;
     for (int i = 0; i < TAILLE; i++)
     {
+        if(grille[i][]){
+            
+        }
+    }
+    for (int j = 0; j < N; j++)
+    {
+        if (grille[][j])
+        {
+            /* code */
+        }
         
     }
+    
     
 }
 
@@ -52,4 +78,19 @@ void resultat(){
     printf("*********   RESULTATS POUR  ***********");
     printf("nombres de cases remplies = sur     Taux de remplissage =  ");
     printf("nombres de candidats éliminé =      pourcentage de remplissage =  %");
+}
+
+void chargerGrille(tGrille g) {
+    char nomFichier[30];
+    FILE *f;
+    printf("Nom du fichier ?\n");
+    scanf("%s", nomFichier);
+    f = fopen(nomFichier, "rb");
+
+    if (f == NULL) {
+        printf("\nERREUR sur le fichier %s\n", nomFichier);
+    } else {
+        fread(g, sizeof(int), TAILLE * TAILLE, f);
+    }
+    fclose(f);
 }
