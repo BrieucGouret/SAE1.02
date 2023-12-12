@@ -12,7 +12,7 @@ typedef struct {
     int nbCandidats;
 } tCase2;
 
-typedef int tGrille[TAILLE][TAILLE];
+typedef tCase2 tGrille[TAILLE][TAILLE];
 
 void resultat();
 void initTab(tCase2 Case);
@@ -22,7 +22,34 @@ void ajouterCandidats(tCase2 Case, int valeur);
 void retirerCandidats();
 
 int main(){
+    tGrille grille;
     tCase2 Case;
+
+    // se deplace dans le tableau jusuqu'à trouvé une case qui à la valeur 0 et après test les candidats possisble et ajoute cela au tableau de booléen 
+    // après re tester pour savoir les valeurs à enlever les candidats savoir les candidats uniques
+
+    for (int i = 0; i < TAILLE; i++)
+    {
+        for (int j = 0; j < TAILLE; j++)
+        {
+            if (grille[i][j].valeur == 0)
+            {
+                for (int nb = 1; i < TAILLE; i++)
+                {
+                    
+                   if ( estCandidats(grille[i][j]) == true)
+                   {
+                        ajouterCandidats( grille[i][j] ,nb);
+                   }
+                     
+                }
+                
+                
+            }
+            
+        }
+        
+    }
 }
 void initTab(tCase2 Case){
     for (int i = 1; i <= TAILLE; i++)
@@ -33,14 +60,7 @@ void initTab(tCase2 Case){
 }
 
 void ajouterCandidats(tCase2 Case, int valeur){
-    for (int i = 0; i < TAILLE; i++)
-    {
-        for (int j = 0; j < TAILLE; j++)
-        {
-            /* code */
-        }
-        
-    }
+    
     
     
     
