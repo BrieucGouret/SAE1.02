@@ -5,15 +5,13 @@
 
 #define N 3
 #define TAILLE (N*N)
-typedef tCase tGrille[TAILLE][TAILLE];
+typedef tCase1 tGrille[TAILLE][TAILLE];
 
 typedef struct {
     int valeur;
     int candidats[TAILLE];
     int nbCandidats;
 } tCase1;
-
-
 
 void ajouterCandidats(tCase1 *laCase, int val);
 void retirerCandidats(tCase1 *laCase, int val);
@@ -22,15 +20,29 @@ int nbCandidats(tCase1 laCase);
 void resultats();
 
 int main(){
-    g tGrille;
-
+    tGrille grille;
+    tCase1 laCase;
+    
 }
 
 void ajouterCandidats(tCase1 *laCase, int val){
-    if (val == 0)
+    int anticandidat = 0;
+    if (grille[i][j].valeur == 0)
     {
-        tCase1.candidats[nbCandidats] = val;
-        tCase1.nbCandidats = nbCandidats +1; 
+        for (int i = 0; i < TAILLE; i++){
+            for (int j = 0; j < TAILLE; j++)
+            {
+              if (grille[][].val )
+              {
+
+              }
+                
+            }
+            
+                
+        }
+        laCase.candidats[nbCandidats] = val;
+        laCase.nbCandidats = nbCandidats +1; 
     }   
     else{
         printf("La case n'est pas vide")
