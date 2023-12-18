@@ -12,19 +12,56 @@ typedef struct {
     int nbCandidats;
 } tCase2;
 
-typedef tCase2 tGrille[TAILLE][TAILLE];
+
+typedef int tGrille[TAILLE][TAILLE];
 
 void resultat();
+
 void initTab(tCase2 Case);
+
+//prends la grille et regarde les différentas case vides
+int initNbCaseVide(tGrille grille);
+
 void chargerGrille(tGrille grille);
+
+//estcandidats teste si une valeur est possible à mettre
 bool estCandidats(tGrille grille, int valeur );
+
+
+//l'ajout su candidatq au tablo booléen
 void ajouterCandidats(tCase2 Case, int valeur);
-void retirerCandidats();
+
+
+//retire le candidats du tablo
+void retirerCandidats(tCase2 Case , int valeur);
 
 int main(){
-    tGrille grille;
+    tGrille grille, g;
     tCase2 Case;
+    bool progression = true;
+    int nbCasesVides = initNbCaseVide(grille);
 
+    chargerGrille(g);
+
+    //se deplace dans la grille et cherche les cases qui n'ont que un seul candidats 
+    while (nbCasesVides == 0 && progression == true)
+    {
+        for (int i = 0; i < TAILLE; i++)
+        {
+            for (int j = 0; j < TAILLE; i++)
+            {
+                if (Case.nbCandidats == 0)
+                {
+                    grille[i][j] = Case.valeur;
+                    nbCasesVides = nbCasesVides - 1;
+                }
+                
+            }
+            
+        }
+        
+    }
+    
     // se deplace dans le tableau jusuqu'à trouvé une case qui à la valeur 0 et après test les candidats possisble et ajoute cela au tableau de booléen 
     // après re tester pour savoir les valeurs à enlever les candidats savoir les candidats uniques
 
@@ -40,6 +77,8 @@ int main(){
                    if ( estCandidats(grille[i][j]) == true)
                    {
                         ajouterCandidats( grille[i][j] ,nb);
+
+                        
                    }
                      
                 }
@@ -60,10 +99,6 @@ void initTab(tCase2 Case){
 }
 
 void ajouterCandidats(tCase2 Case, int valeur){
-    
-    
-    
-    
     
     if ( Case.valeur == 0)
     {
