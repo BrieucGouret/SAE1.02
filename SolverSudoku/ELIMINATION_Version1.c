@@ -22,37 +22,32 @@ bool resoudreSudoku(tGrille grille);
 
 int main() {
     tGrille grille;
-    
-    // Charger la grille à résoudre
-    // (ajoutez votre code pour charger la grille ici)
-
-    // Afficher la grille avant résolution
-    printf("Grille avant résolution :\n");
-    afficherGrille(grille);
-
-    // Résoudre le sudoku
-    if (resoudreSudoku(grille)) {
-        printf("\nGrille résolue :\n");
-        afficherGrille(grille);
-    } else {
-        printf("\nLa grille n'a pas de solution.\n");
-    }
+    progression : booléen;
+    nbCasesVides : entier;
+    nbCasesVides = chargerGrille(g);
+    initialiserCandidats(g);
+    progression = true;
+    tant que (nbCaseVides <> 0 ET progression) faire
+    progression = false;
+    // technique du singleton nu
+    pour chaque case libre de la grille faire
+    si la case n'a qu'un seul candidat alors
+    affecter ce candidat à la case
+    nbCasesVides = nbCasesVides – 1;
+    retirer ce candidat de toutes les cases de la
+    même ligne, de la même colonne et du même bloc
+    progression = true;
+    finsi
+    finfaire
 
     return EXIT_SUCCESS;
 }
 
-void ajouterCandidats(tCase1 *laCase, tGrille grille, int lig, int col) {
-    if (grille[lig][col].valeur == 0) {
-        for (int val = 1; val <= TAILLE; val++) {
-            if (estCandidat(grille[lig][col], val) &&
-                estCandidat(grille[lig][col], val) &&
-                estCandidat(grille[lig][col], val)) {
-                laCase->candidats[laCase->nbCandidats] = val;
-                laCase->nbCandidats++;
-            }
-        }
-    }
+void ajouterCandidats(tCase1 *laCase, int val) {
+    laCase->candidats[laCase->nbCandidats] = val;
+    laCase->nbCandidats++;
 }
+            
 
 void retirerCandidats(tCase1 *laCase, int val) {
     for (int i = 0; i < laCase->nbCandidats; i++) {
@@ -80,37 +75,7 @@ int nbCandidats(tCase1 laCase) {
 }
 
 void afficherGrille(tGrille g) {
-    // ... (reprendre votre fonction afficherGrille ici)
+
 }
 
-bool resoudreSudoku(tGrille grille) {
-    int lig, col;
 
-    // Recherche d'une case vide
-    for (lig = 0; lig < TAILLE; lig++) {
-        for (col = 0; col < TAILLE; col++) {
-            if (grille[lig][col].valeur == 0) {
-                // Tenter chaque candidat dans la case
-                for (int val = 1; val <= TAILLE; val++) {
-                    if (estCandidat(grille[lig][col], val)) {
-                        grille[lig][col].valeur = val;
-
-                        // Résoudre récursivement le reste du sudoku
-                        if (resoudreSudoku(grille)) {
-                            return true;
-                        }
-
-                        // Si la valeur ne fonctionne pas, annuler le choix
-                        grille[lig][col].valeur = 0;
-                    }
-                }
-
-                // Si aucun candidat ne fonctionne, revenir en arrière
-                return false;
-            }
-        }
-    }
-
-    // Si toutes les cases sont remplies, la grille est résolue
-    return true;
-}
