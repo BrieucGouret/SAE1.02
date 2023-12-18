@@ -43,16 +43,11 @@ int main() {
     return EXIT_SUCCESS;
 }
 
-void ajouterCandidats(tCase1 *laCase, tGrille grille, int lig, int col) {
-    if (grille[lig][col].valeur == 0) {
-        for (int val = 1; val <= TAILLE; val++) {
-            if (estCandidat(grille[lig][col], val)) {
-                laCase->candidats[laCase->nbCandidats] = val;
-                laCase->nbCandidats++;
-            }
-        }
-    }
+void ajouterCandidats(tCase1 *laCase, int val) {
+    laCase->candidats[laCase->nbCandidats] = val;
+    laCase->nbCandidats++;
 }
+            
 
 void retirerCandidats(tCase1 *laCase, int val) {
     for (int i = 0; i < laCase->nbCandidats; i++) {
