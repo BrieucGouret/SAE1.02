@@ -17,7 +17,7 @@ typedef int tGrille[TAILLE][TAILLE];
 
 void resultat();
 
-void initTab(tCase2 Case);
+void initTab(tCase2 *Case);
 
 //prends la grille et regarde les différentas case vides
 int initNbCaseVide(tGrille grille);
@@ -28,20 +28,26 @@ void chargerGrille(tGrille grille);
 bool estCandidats(tGrille grille, int valeur );
 
 
-//l'ajout su candidatq au tablo booléen
-void ajouterCandidats(tCase2 Case, int valeur);
+//l'ajout du candidats au tablo booléen
+void ajouterCandidats(tCase2 *Case, int valeur);
 
 
 //retire le candidats du tablo
-void retirerCandidats(tCase2 Case , int valeur);
+void retirerCandidats(tCase2 *Case , int valeur);
 
 int main(){
     tGrille grille, g;
     tCase2 Case;
     bool progression = true;
     int nbCasesVides = initNbCaseVide(grille);
+    int nbCaseRempli = 0 ;
+    float tauxDeRemplissage;
+    int candidatsElimine;
+    float pourcentageElemination;
 
     chargerGrille(g);
+    // se deplace dans le tableau jusuqu'à trouvé une case qui à la valeur 0 et après test les candidats possisble et ajoute cela au tableau de booléen 
+    // après re tester pour savoir les valeurs à enlever les candidats savoir les candidats uniques
 
     //se deplace dans la grille et cherche les cases qui n'ont que un seul candidats 
     while (nbCasesVides == 0 && progression == true)
@@ -50,37 +56,22 @@ int main(){
         {
             for (int j = 0; j < TAILLE; i++)
             {
-                if (Case.nbCandidats == 0)
+                if (Case->nbCandidats == 1)
                 {
-                    grille[i][j] = Case.valeur;
+                    grille[i][j] = Case->valeur;
                     nbCasesVides = nbCasesVides - 1;
+                    //chercher toute les lignes et colonne et leurs enlever ce candidats
+                    progression = true;
                 }
-                
-            }
-            
-        }
-        
-    }
-    
-    // se deplace dans le tableau jusuqu'à trouvé une case qui à la valeur 0 et après test les candidats possisble et ajoute cela au tableau de booléen 
-    // après re tester pour savoir les valeurs à enlever les candidats savoir les candidats uniques
-
-    for (int i = 0; i < TAILLE; i++)
-    {
-        for (int j = 0; j < TAILLE; j++)
-        {
-            if (grille[i][j].valeur == 0)
-            {
-                for (int nb = 1; i < TAILLE; i++)
+                //boucle qui testera les valeurs de 1 à 9 dans 
+                //le tablo candidats de estCandidats
+                else
                 {
+                    for (int compt = 1; compt < TAILLE; compt++)
+                    {
+                        estCandidats(grille[i][j],compt);
+                    }
                     
-                   if ( estCandidats(grille[i][j]) == true)
-                   {
-                        ajouterCandidats( grille[i][j] ,nb);
-
-                        
-                   }
-                     
                 }
                 
                 
@@ -89,47 +80,66 @@ int main(){
         }
         
     }
+    chargerGrille(g);
+    afficherStats();
+    
+    
+
 }
-void initTab(tCase2 Case){
+void initTab(tCase2 *Case){
     for (int i = 1; i <= TAILLE; i++)
     {
-        Case.candidats[i] = false;
+        Case->candidats[i] = false;
     }
     
 }
 
-void ajouterCandidats(tCase2 Case, int valeur){
+void ajouterCandidats(tCase2 *Case, int valeur){
+    Case->candidats[valeur] = true;
     
-    if ( Case.valeur == 0)
-    {
-        Case.candidats[valeur] = true;
-    }else{
-        printf("Case rempli d'une valeur\n");
-    }
+    
     
 }
 
 bool estCandidats(tGrille grille, int valeur ){
-    estCandidats = false;
-    for (int i = 0; i < TAILLE; i++)
-    {
-        if(grille[i][]){
-            
+    int i, j, coinLigne, coinColonne;
+    bool possible = true;
+    for (j = 0; j < TAILLE; j++) {
+        if (grille[numLignes][j] == valeur && j != numColonne) {
+            printf("Valeur impossible à placer, elle est déjà présente sur la ligne.\n");
+            possible = false;
         }
     }
-    for (int j = 0; j < N; j++)
-    {
-        if (grille[][j])
-        {
-            /* code */
+
+
+
+    j = numColonne;
+    i = 0;
+    for (i = 0; i < TAILLE; i++) {
+        if (grille[i][numColonne] == valeur && i != numLignes) {
+            printf("Valeur impossible à placer, elle est déjà présente sur la colonne.\n");
+            possible = false;
         }
-        
     }
+    coinLigne = (numLignes / 3) * 3;
+    coinColonne = (numColonne / 3) * 3;
+
+    for (int i = coinLigne; i < coinLigne + 3; i++) {
+        for (int j = coinColonne; j < coinColonne + 3; j++) {
+            if (grille[i][j] == valeur && (i != numLignes || j != numColonne)) {
+                printf("Valeur impossible à placer, elle est déjà présente dans le carré 3x3.\n");
+                possible = false;
+            }
+        }
+    }
+
+    return possible;
     
     
 }
 
-void resultat(){
+void afficherStats(){
+    
     printf("*********   RESULTATS POUR  ***********");
     printf("nombres de cases remplies = sur     Taux de remplissage =  ");
     printf("nombres de candidats éliminé =      pourcentage de remplissage =  %");
