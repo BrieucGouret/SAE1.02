@@ -25,7 +25,7 @@ int initNbCaseVide(tGrille grille);
 void chargerGrille(tGrille grille);
 
 //estcandidats teste si une valeur est possible à mettre
-bool estCandidats(tGrille grille, int valeur );
+bool estCandidats(tGrille grille, int valeur , int numLignes , int numColonne  );
 
 
 //l'ajout du candidats au tablo booléen
@@ -56,9 +56,9 @@ int main(){
         {
             for (int j = 0; j < TAILLE; i++)
             {
-                if (Case->nbCandidats == 1)
+                if (Case.nbCandidats == 1)
                 {
-                    grille[i][j] = Case->valeur;
+                    grille[i][j] = Case.valeur;
                     nbCasesVides = nbCasesVides - 1;
                     //chercher toute les lignes et colonne et leurs enlever ce candidats
                     progression = true;
@@ -69,7 +69,12 @@ int main(){
                 {
                     for (int compt = 1; compt < TAILLE; compt++)
                     {
-                        estCandidats(grille[i][j],compt);
+                        estCandidats(grille[i][j],compt, i , j);
+                        if (/* condition */)
+                        {
+                            /* code */
+                        }
+                        
                     }
                     
                 }
@@ -101,7 +106,7 @@ void ajouterCandidats(tCase2 *Case, int valeur){
     
 }
 
-bool estCandidats(tGrille grille, int valeur ){
+bool estCandidats(tGrille grille, int valeur, int numLignes , int numColonne  ){
     int i, j, coinLigne, coinColonne;
     bool possible = true;
     for (j = 0; j < TAILLE; j++) {
@@ -111,16 +116,16 @@ bool estCandidats(tGrille grille, int valeur ){
         }
     }
 
-
-
     j = numColonne;
     i = 0;
+
     for (i = 0; i < TAILLE; i++) {
         if (grille[i][numColonne] == valeur && i != numLignes) {
             printf("Valeur impossible à placer, elle est déjà présente sur la colonne.\n");
             possible = false;
         }
     }
+
     coinLigne = (numLignes / 3) * 3;
     coinColonne = (numColonne / 3) * 3;
 
@@ -132,10 +137,7 @@ bool estCandidats(tGrille grille, int valeur ){
             }
         }
     }
-
-    return possible;
-    
-    
+    return possible;  
 }
 
 void afficherStats(){
