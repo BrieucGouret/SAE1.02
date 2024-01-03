@@ -35,26 +35,31 @@ void ajouterCandidats(tCase2 *Case, int valeur);
 //retire le candidats du tablo
 void retirerCandidats(tCase2 *Case , int valeur);
 
+void affichageGrille(tGrille grille);
+
 int main(){
-    tGrille grille, g;
+    tGrille grille;
     tCase2 Case;
     bool progression = true;
+    bool nbEstCandidats;
     int nbCasesVides = initNbCaseVide(grille);
     int nbCaseRempli = 0 ;
     float tauxDeRemplissage;
     int candidatsElimine;
     float pourcentageElemination;
 
-    chargerGrille(g);
+    chargerGrille(grille);
     // se deplace dans le tableau jusuqu'à trouvé une case qui à la valeur 0 et après test les candidats possisble et ajoute cela au tableau de booléen 
     // après re tester pour savoir les valeurs à enlever les candidats savoir les candidats uniques
-
+    printf("%d\n",nbCasesVides);
+    affichageGrille(grille);
+    
     //se deplace dans la grille et cherche les cases qui n'ont que un seul candidats 
     while (nbCasesVides == 0 && progression == true)
     {
         for (int i = 0; i < TAILLE; i++)
         {
-            for (int j = 0; j < TAILLE; i++)
+            for (int j = 0; j < TAILLE; j++)
             {
                 if (Case.nbCandidats == 1)
                 {
@@ -67,17 +72,18 @@ int main(){
                 //le tablo candidats de estCandidats
                 else
                 {
-                    for (int compt = 1; compt < TAILLE; compt++)
+                    for (int compt = 1; compt <= TAILLE; compt++)
                     {
-                        estCandidats(grille[i][j],compt, i , j);
-                        if (/* condition */)
+                        nbEstCandidats = estCandidats(grille,compt, i , j);
+                        if (nbEstCandidats == true)
                         {
-                            /* code */
+                            ajouterCandidats(&Case, compt);
                         }
                         
                     }
                     
                 }
+                printf("%d",nbCasesVides);
                 
                 
             }
@@ -85,11 +91,9 @@ int main(){
         }
         
     }
-    chargerGrille(g);
-    afficherStats();
+    affichageGrille(grille);
+    /// afficherStats();
     
-    
-
 }
 void initTab(tCase2 *Case){
     for (int i = 1; i <= TAILLE; i++)
@@ -99,11 +103,27 @@ void initTab(tCase2 *Case){
     
 }
 
+int initNbCaseVide(tGrille grille){
+    int nbCaseVide = 0;
+    for (int i = 0; i < TAILLE; i++)
+    {
+        for (int j = 0; j < TAILLE; j++)
+        {
+            if (grille[i][j] == 0)
+            {
+                nbCaseVide++;
+            }
+            
+        }
+        
+    }
+    return nbCaseVide;
+    
+}
+
 void ajouterCandidats(tCase2 *Case, int valeur){
     Case->candidats[valeur] = true;
-    
-    
-    
+      
 }
 
 bool estCandidats(tGrille grille, int valeur, int numLignes , int numColonne  ){
@@ -139,6 +159,7 @@ bool estCandidats(tGrille grille, int valeur, int numLignes , int numColonne  ){
     }
     return possible;  
 }
+/*
 
 void afficherStats(){
     
@@ -146,7 +167,7 @@ void afficherStats(){
     printf("nombres de cases remplies = sur     Taux de remplissage =  ");
     printf("nombres de candidats éliminé =      pourcentage de remplissage =  %");
 }
-
+*/
 void chargerGrille(tGrille g) {
     char nomFichier[30];
     FILE *f;
@@ -160,4 +181,35 @@ void chargerGrille(tGrille g) {
         fread(g, sizeof(int), TAILLE * TAILLE, f);
     }
     fclose(f);
+}
+
+void affichageGrille(tGrille grille) {
+    int i, j, compteur1, compteur2 = 1;
+    printf("  ");
+    for (compteur1 = 1; compteur1 < TAILLE + 1; compteur1++) {
+        printf("%3d", compteur1);
+        if (compteur1 == 6 || compteur1 == 3) {
+            printf(" ");
+        }
+    }
+    printf("\n  +---------+---------+---------+\n");
+    for (i = 0; i < TAILLE; i++) {
+        printf("%d |", compteur2);
+        for (j = 0; j < TAILLE; j++) {
+            if (grille[i][j] == 0) {
+                printf(" . ");
+            } else {
+                printf("%2d ", grille[i][j]);
+            }
+            if (j == 2 || j == 5) {
+                printf("|");
+            }
+        }
+        printf("|\n");
+        compteur2++;
+        if (compteur2 == 4 || compteur2 == 7) {
+            printf("  +---------+---------+---------+\n");
+        }
+    }
+    printf("  +---------+---------+---------+\n");
 }
