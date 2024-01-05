@@ -18,7 +18,7 @@ void initTab(tCase2 *Case);
 int initNbCaseVide(tGrille grille);
 void ajouterCandidats(tCase2 *Case, int valeur);
 void retirerCandidats(tCase2 *Case, int valeur);
-bool estCandidats(tGrille grille, int valeur, int numLignes, int numColonne);
+bool estCandidats(tGrille grille, int valeur, int numLigne, int numColonne);
 void chargerGrille(tGrille g);
 void affichageGrille(tGrille grille);
 void resolverSudoku(tGrille grille);
@@ -60,15 +60,17 @@ int initNbCaseVide(tGrille grille) {
 }
 
 void ajouterCandidats(tCase2 *Case, int valeur) {
-    Case->candidats[valeur] = false;
-    Case->nbCandidats--;
+    if (Case->candidats[valeur]) {
+        Case->candidats[valeur] = false;
+        Case->nbCandidats--;
 
-    if (Case->nbCandidats == 1) {
-        // S'il ne reste qu'un candidat, met à jour la valeur de la case
-        for (int i = 1; i <= TAILLE; i++) {
-            if (Case->candidats[i]) {
-                Case->valeur = i;
-                break;
+        if (Case->nbCandidats == 1) {
+            // S'il ne reste qu'un candidat, met à jour la valeur de la case
+            for (int i = 1; i <= TAILLE; i++) {
+                if (Case->candidats[i]) {
+                    Case->valeur = i;
+                    break;
+                }
             }
         }
     }
@@ -79,11 +81,11 @@ void retirerCandidats(tCase2 *Case, int valeur) {
     Case->nbCandidats--;
 }
 
-bool estCandidats(tGrille grille, int valeur, int numLignes, int numColonne) {
+bool estCandidats(tGrille grille, int valeur, int numLigne, int numColonne) {
     int i, j, coinLigne, coinColonne;
 
     for (j = 0; j < TAILLE; j++) {
-        if (grille[numLignes][j] == valeur) {
+        if (grille[numLigne][j] == valeur) {
             return false;  // Valeur déjà présente sur la ligne
         }
     }
@@ -94,7 +96,7 @@ bool estCandidats(tGrille grille, int valeur, int numLignes, int numColonne) {
         }
     }
 
-    coinLigne = (numLignes / N) * N;
+    coinLigne = (numLigne / N) * N;
     coinColonne = (numColonne / N) * N;
 
     for (int i = coinLigne; i < coinLigne + N; i++) {
@@ -200,9 +202,10 @@ void affichageGrille(tGrille g) {
 }
 
 void resolverSudoku(tGrille grille) {
+    int nbCasesVides = initNbCaseVide(grille);
     bool progression = true;
 
-    while (progression) {
+    while (progression && nbCasesVides > 0) {
         progression = false;
 
         for (int i = 0; i < TAILLE; i++) {
@@ -220,12 +223,18 @@ void resolverSudoku(tGrille grille) {
                     if (Case.nbCandidats == 1) {
                         grille[i][j] = Case.valeur;
                         progression = true;
+                        nbCasesVides--;
                     }
                 }
             }
         }
     }
 }
+
+
+
+
+
 
 
 
