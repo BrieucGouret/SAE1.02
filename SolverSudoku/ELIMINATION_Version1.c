@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
 #define N 3
@@ -7,75 +8,224 @@
 
 typedef struct {
     int valeur;
-    int candidats[TAILLE];
+    bool candidats[TAILLE + 1];
     int nbCandidats;
-} tCase1;
+} tCase2;
 
-typedef tCase1 tGrille[TAILLE][TAILLE];
+typedef int tGrille[TAILLE][TAILLE];
 
-void ajouterCandidats(tCase1 *laCase, tGrille grille, int lig, int col);
-void retirerCandidats(tCase1 *laCase, int val);
-bool estCandidat(tCase1 laCase, int val);
-int nbCandidats(tCase1 laCase);
-void afficherGrille(tGrille g);
-bool resoudreSudoku(tGrille grille);
+void initTab(tCase2 *Case);
+int initNbCaseVide(tGrille grille);
+void ajouterCandidats(tCase2 *Case, int valeur);
+void retirerCandidats(tCase2 *Case, int valeur);
+bool estCandidats(tGrille grille, int valeur, int numLignes, int numColonne);
+void chargerGrille(tGrille g);
+void affichageGrille(tGrille grille);
+void resolverSudoku(tGrille grille);
 
 int main() {
     tGrille grille;
-    progression : booléen;
-    nbCasesVides : entier;
-    nbCasesVides = chargerGrille(g);
-    initialiserCandidats(g);
-    progression = true;
-    tant que (nbCaseVides <> 0 ET progression) faire
-    progression = false;
-    // technique du singleton nu
-    pour chaque case libre de la grille faire
-    si la case n'a qu'un seul candidat alors
-    affecter ce candidat à la case
-    nbCasesVides = nbCasesVides – 1;
-    retirer ce candidat de toutes les cases de la
-    même ligne, de la même colonne et du même bloc
-    progression = true;
-    finsi
-    finfaire
+    chargerGrille(grille);
 
-    return EXIT_SUCCESS;
+    printf("Grille initiale :\n");
+    affichageGrille(grille);
+
+    resolverSudoku(grille);
+
+    printf("Grille résolue :\n");
+    affichageGrille(grille);
+
+    return 0;
 }
 
-void ajouterCandidats(tCase1 *laCase, int val) {
-    laCase->candidats[laCase->nbCandidats] = val;
-    laCase->nbCandidats++;
-}
-            
+void initTab(tCase2 *Case) {
+    Case->valeur = 0;
+    Case->nbCandidats = TAILLE;
 
-void retirerCandidats(tCase1 *laCase, int val) {
-    for (int i = 0; i < laCase->nbCandidats; i++) {
-        if (laCase->candidats[i] == val) {
-            for (int j = i; j < laCase->nbCandidats - 1; j++) {
-                laCase->candidats[j] = laCase->candidats[j + 1];
+    for (int i = 1; i <= TAILLE; i++) {
+        Case->candidats[i] = true;
+    }
+}
+
+int initNbCaseVide(tGrille grille) {
+    int nbCaseVide = 0;
+    for (int i = 0; i < TAILLE; i++) {
+        for (int j = 0; j < TAILLE; j++) {
+            if (grille[i][j] == 0) {
+                nbCaseVide++;
             }
-            laCase->nbCandidats--;
-            break;
+        }
+    }
+    return nbCaseVide;
+}
+
+void ajouterCandidats(tCase2 *Case, int valeur) {
+    Case->candidats[valeur] = false;
+    Case->nbCandidats--;
+
+    if (Case->nbCandidats == 1) {
+        // S'il ne reste qu'un candidat, met à jour la valeur de la case
+        for (int i = 1; i <= TAILLE; i++) {
+            if (Case->candidats[i]) {
+                Case->valeur = i;
+                break;
+            }
         }
     }
 }
 
-bool estCandidat(tCase1 laCase, int val) {
-    for (int i = 0; i < laCase.nbCandidats; i++) {
-        if (laCase.candidats[i] == val) {
-            return true;
+void retirerCandidats(tCase2 *Case, int valeur) {
+    Case->candidats[valeur] = false;
+    Case->nbCandidats--;
+}
+
+bool estCandidats(tGrille grille, int valeur, int numLignes, int numColonne) {
+    int i, j, coinLigne, coinColonne;
+
+    for (j = 0; j < TAILLE; j++) {
+        if (grille[numLignes][j] == valeur) {
+            return false;  // Valeur déjà présente sur la ligne
         }
     }
-    return false;
+
+    for (i = 0; i < TAILLE; i++) {
+        if (grille[i][numColonne] == valeur) {
+            return false;  // Valeur déjà présente sur la colonne
+        }
+    }
+
+    coinLigne = (numLignes / N) * N;
+    coinColonne = (numColonne / N) * N;
+
+    for (int i = coinLigne; i < coinLigne + N; i++) {
+        for (int j = coinColonne; j < coinColonne + N; j++) {
+            if (grille[i][j] == valeur) {
+                return false;  // Valeur déjà présente dans le bloc
+            }
+        }
+    }
+
+    return true;
 }
 
-int nbCandidats(tCase1 laCase) {
-    return laCase.nbCandidats;
+void chargerGrille(tGrille g) {
+    char nomFichier[30];
+    FILE *f;
+    printf("Nom du fichier ?\n");
+    scanf("%s", nomFichier);
+    f = fopen(nomFichier, "rb");
+
+    if (f == NULL) {
+        printf("\nERREUR sur le fichier %s\n", nomFichier);
+    } else {
+        fread(g, sizeof(int), TAILLE * TAILLE, f);
+    }
+    fclose(f);
 }
 
-void afficherGrille(tGrille g) {
+void affichageGrille(tGrille g) {
+    // affichage des numéros de colonne 
+    printf("     ");
+    for (int nb = 1; nb <= TAILLE; nb++){
+        if(nb > 3 && nb % N == 3) //c'était 3 avant tqt
+        {
+            printf(" ");
+        }
+        printf(" %d ", nb);
+    }
+    printf("\n");
+    printf("    ");
+
+    // affichage de la séparation du haut 
+    for (int i = 0; i < N; i++)
+    {
+        printf("+");
+        printf("--");
+        for (int j = 0; j < N; j++)
+        {
+            printf("--");
+        }    
+        printf("-");   
+    }
+    printf("+");
+    printf("\n");
+
+    // boucle qui fait l'affichage chacune des lignes
+    for (int i = 0; i < TAILLE; i++){
+        printf("%2d  ",i+1);
+        printf("|");
+
+        // boucle qui affiche chacune des colonnes
+        for (int j = 0; j < TAILLE; j++) {
+            printf(" %d ", g[i][j]);
+            if ((j+1) % N == 0){ // si le reste de la division de j par 3 donne 0, on affiche un pipe pour séparer les blocs de 3 par 3
+                printf("|");
+            }
+        }
+        printf("\n");
+
+        // séparations avec + et - entre les blocs de 3 par 3
+        if ((i+1) % N == 0 && i+1 !=TAILLE) 
+        {
+            printf("    ");
+            for (int i = 0; i < N; i++)
+            {
+                printf("+");
+                printf("--");
+                for (int j = 0; j < N; j++)
+                {
+                    printf("--");
+                }    
+                printf("-");   
+    }
+    printf("+");
+    printf("\n");
+        } 
+    }
+    // affichage du dernier séparateur avec + et -
+    printf("    ");
+    for (int i = 0; i < N; i++)
+    {
+        printf("+");
+        printf("--");
+        for (int j = 0; j < N; j++)
+        {
+            printf("--");
+        }    
+        printf("-");   
+    }
+    printf("+");
+    printf("\n");
 
 }
+
+void resolverSudoku(tGrille grille) {
+    bool progression = true;
+
+    while (progression) {
+        progression = false;
+
+        for (int i = 0; i < TAILLE; i++) {
+            for (int j = 0; j < TAILLE; j++) {
+                if (grille[i][j] == 0) {
+                    tCase2 Case;
+                    initTab(&Case);
+
+                    for (int compt = 1; compt <= TAILLE; compt++) {
+                        if (estCandidats(grille, compt, i, j)) {
+                            ajouterCandidats(&Case, compt);
+                        }
+                    }
+
+                    if (Case.nbCandidats == 1) {
+                        grille[i][j] = Case.valeur;
+                        progression = true;
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 
