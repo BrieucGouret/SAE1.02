@@ -16,7 +16,7 @@ typedef struct {
 typedef int tGrille[TAILLE][TAILLE];
 typedef tCase2 tGrilleCase[TAILLE][TAILLE];
 
-void afficherStats(int *nbCasesVides,int *nbCasesVidesAvantSolver, int *nombreDeCandidats, int *nombreDeCandidatsAvantSolver);
+void afficherStats(int *nbCasesVides,int *nbCasesVidesAvantSolver, int *nombreDeCandidats, int *nombreDeCandidatsAvantSolver,char *nomFichier);
 
 void initCase(tCase2 *Case);
 
@@ -27,7 +27,7 @@ int nombreDeCandidats(tGrilleCase grilleCase);
 
 void initCandidats(tGrilleCase grilleCase);
 
-void chargerGrille(tGrille grille);
+void chargerGrille(tGrille grille,char *nomFichier);
 
 //estcandidats teste si une valeur est possible à mettre
 bool estCandidats(tGrilleCase grilleCase, int valeur, int numLignes , int numColonne  );
@@ -57,9 +57,10 @@ void singletonCacheBloc(tGrilleCase grilleCase, tCase2 *Case, int numLigne, int 
 int main(){
     tGrille grille;
     tGrilleCase grilleCase;
+    char nomgrille[30];
     bool progression = true;
     int nbCasesVidesAvant;
-    int nombresCandidats,nbCandidatsAvantSolver;
+    int nombresCandidats = 0,nbCandidatsAvantSolver;
     int nbCasesVides,nbCasesVidesAvantSolver;
     int nbCaseRempli = 0 ;
     int toursSansAvance = 0;
@@ -68,7 +69,7 @@ int main(){
     int candidatsElimine;
     float pourcentageElemination;
     */
-    chargerGrille(grille);
+    chargerGrille(grille,nomgrille);
     // se deplace dans le tableau jusuqu'à trouvé une case qui à la valeur 0 et après test les candidats possisble et ajoute cela au tableau de booléen 
     // après re tester pour savoir les valeurs à enlever les candidats savoir les candidats uniques
     nbCasesVides = initNbCaseVide(grille);
@@ -133,7 +134,7 @@ int main(){
     printf("fin de prog\n");
     affichageGrille(grille);
     
-    afficherStats(&nbCaseRempli,&nbCasesVidesAvantSolver,&nombresCandidats,&nbCandidatsAvantSolver);
+    afficherStats(&nbCaseRempli,&nbCasesVidesAvantSolver,&nombresCandidats,&nbCandidatsAvantSolver,nomgrille);
     
 }
 
@@ -411,16 +412,15 @@ void paireNues (tCase2 *Case){
 
 */
 
-void afficherStats(int *nbCasesVides,int *nbCasesVidesAvantSolver,int *nombreDeCandidats, int *nombreDeCandidatsAvantSolver){
+void afficherStats(int *nbCasesVides,int *nbCasesVidesAvantSolver,int *nombreDeCandidats, int *nombreDeCandidatsAvantSolver,char *nomFichier){
     float tauxDeRemplissage = ((((float)*nbCasesVides) /  *nbCasesVidesAvantSolver) * 100);
     float pourcentageElemination = ((((float)*nombreDeCandidats) /  *nombreDeCandidatsAvantSolver) * 100);
-    printf("*********   RESULTATS POUR  ***********\n");
+    printf("*********   RESULTATS POUR %s  ***********\n",nomFichier);
     printf("nombres de cases remplies = %d sur %d    Taux de remplissage = %.3f%% \n ",*nbCasesVides,*nbCasesVidesAvantSolver , tauxDeRemplissage);
     printf("nombres de candidats éliminé = %d sur %d     pourcentage de elimination =  %.3f%% \n",*nombreDeCandidats,*nombreDeCandidatsAvantSolver,pourcentageElemination);
 }
 
-void chargerGrille(tGrille g) {
-    char nomFichier[30];
+void chargerGrille(tGrille g,char *nomFichier) {
     FILE *f;
     printf("Nom du fichier ?\n");
     scanf("%s", nomFichier);
