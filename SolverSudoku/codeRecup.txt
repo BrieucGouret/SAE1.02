@@ -14,87 +14,120 @@ typedef struct {
 
 
 typedef int tGrille[TAILLE][TAILLE];
+typedef tCase2 tGrilleCase[TAILLE][TAILLE];
 
-void resultat();
+void afficherStats();
 
 void initCase(tCase2 *Case);
 
 //prends la grille et regarde les différentas case vides
 int initNbCaseVide(tGrille grille);
 
+void initCandidats(tGrilleCase grilleCase);
+
 void chargerGrille(tGrille grille);
 
 //estcandidats teste si une valeur est possible à mettre
-bool estCandidats(tGrille grille, int valeur , int numLignes , int numColonne  );
-
+bool estCandidats(tGrilleCase grilleCase, int valeur, int numLignes , int numColonne  );
 
 //l'ajout du candidats au tablo booléen
 void ajouterCandidats(tCase2 *Case, int valeur);
 
+void ajouterValeur(tCase2 *Case, tGrilleCase grilleCase, int numLigne, int numColonne);
 
 //retire le candidats du tablo
-void retirerCandidats(tCase2 *Case , int valeur);
+void retirerCandidats(tCase2 *Case, int valeur);
+
+void retirerCandidatsColonne(tGrilleCase grilleCase, int numColonne, int valeur);
+void retirerCandidatsBloc(tGrilleCase grilleCase, int numLigne, int numColonne, int valeur);
+void retirerCandidatsLigne(tGrilleCase grilleCase, int numLigne, int valeur);
 
 void affichageGrille(tGrille grille);
 
-void affecterValeur(tCase2 *Case);
+void affecterValeur(tGrille grille,tGrilleCase grilleCase);
+
+void singletonCache(tGrille grille,tGrilleCase grilleCase, int numLigne, int numColonne, int valeur,int *nbCasesVides);
+
+void singletonCacheLignes(tGrilleCase grilleCase, tCase2 *Case, int numLigne, int valeur);
+void singletonCacheColonne(tGrilleCase grilleCase, tCase2 *Case, int numColonne, int valeur);
+void singletonCacheBloc(tGrilleCase grilleCase, tCase2 *Case, int numLigne, int numColonne, int valeur);
 
 int main(){
     tGrille grille;
-    tCase2 Case;
+    tGrilleCase grilleCase;
     bool progression = true;
-    bool nbEstCandidats;
-    int nbCasesVides ;
+    int nbCasesVidesAvant;
+    int nbCasesVides;
     int nbCaseRempli = 0 ;
-    float tauxDeRemplissage;
+    int toursSansAvance = 0;
+    /*float tauxDeRemplissage;
     int candidatsElimine;
     float pourcentageElemination;
-
+    */
     chargerGrille(grille);
     // se deplace dans le tableau jusuqu'à trouvé une case qui à la valeur 0 et après test les candidats possisble et ajoute cela au tableau de booléen 
     // après re tester pour savoir les valeurs à enlever les candidats savoir les candidats uniques
     nbCasesVides = initNbCaseVide(grille);
-    printf("%d\n",nbCasesVides);
+    printf(" nombre de case vides %d\n",nbCasesVides);
+    printf("grille initial\n");
     affichageGrille(grille);
+    affecterValeur(grille,grilleCase);
+    initCandidats(grilleCase);
     
+
     //se deplace dans la grille et cherche les cases qui n'ont que un seul candidats 
-    while (nbCasesVides == 0 && progression == true)
-    {
-        for (int i = 0; i < TAILLE; i++)
-        {
-            for (int j = 0; j < TAILLE; j++)
-            {
-                initCase(&Case);
-                for (int compt = 1; compt <= TAILLE; compt++)
-                    {
-                        nbEstCandidats = estCandidats(grille,compt, i , j);
-                        if (nbEstCandidats == true)
-                        {
-                            ajouterCandidats(&Case, compt);
-                        }
-                        
-                    }
-                if (Case.nbCandidats == 1)
-                {
-                    affecterValeur(&Case);
-                    grille[i][j] = Case.valeur;
-                    nbCasesVides = nbCasesVides - 1;
-                    nbCaseRempli =  nbCaseRempli + 1;
-                    //chercher toute les lignes et colonne et leurs enlever ce candidats
+    while (nbCasesVides != 0 && progression == true && toursSansAvance < 5000) {
+        nbCasesVidesAvant = nbCasesVides;
+
+        for (int i = 0; i < TAILLE; i++) {
+            for (int j = 0; j < TAILLE; j++) {
+
+                if (grilleCase[i][j].nbCandidats == 1) {
+                    ajouterValeur(&grilleCase[i][j], grilleCase, i, j);
+                    grille[i][j] = grilleCase[i][j].valeur;
+                    // Retirer les candidats dans la ligne, colonne et bloc
+                    retirerCandidatsLigne(grilleCase, i, grilleCase[i][j].valeur);
+                    retirerCandidatsColonne(grilleCase, j, grilleCase[i][j].valeur);
+                    retirerCandidatsBloc(grilleCase, i, j, grilleCase[i][j].valeur);
+                    nbCasesVides--;
+                    nbCaseRempli++;
                     progression = true;
                 }
-                printf("%d",nbCasesVides);
+                if (grilleCase[i][j].valeur == 0 && grilleCase[i][j].nbCandidats != 1)
+                {
+                    for (int val = 1; val <= TAILLE; val++) {
+                        if (grilleCase[i][j].candidats[val] == true) {
+                            singletonCache(grille, grilleCase, i, j, val , &nbCasesVides);
+                        }
+                    }
+                }
+
+                if (nbCasesVidesAvant == nbCasesVides) {
+                    toursSansAvance++;
+                } else {
+                    toursSansAvance = 0;
+                }
+                if (toursSansAvance == 5000) {
+                    progression = false;
+                    printf("tours sans avance %d\n", toursSansAvance);
+                }
                 
-                
+  
             }
-            
         }
         
     }
+    
+
+    printf("nb case vide %d\n", nbCasesVides);
+    
+    printf("fin de prog\n");
     affichageGrille(grille);
     /// afficherStats();
     
 }
+
+
 void initCase(tCase2 *Case){
     for (int i = 1; i <= TAILLE; i++)
     {
@@ -122,18 +155,79 @@ int initNbCaseVide(tGrille grille){
     
 }
 
+void initCandidats(tGrilleCase grilleCase){
+    bool nbEstCandidats;
+    for (int i = 0; i < TAILLE; i++)
+    {
+        for (int j = 0; j < TAILLE; j++)
+        {
+            if (grilleCase[i][j].valeur == 0)
+            {
+                for (int compt = 1; compt <= TAILLE; compt++) {
+                    nbEstCandidats = estCandidats(grilleCase, compt, i, j);
+                    if (nbEstCandidats == true) {
+                        ajouterCandidats(&grilleCase[i][j], compt);
+                    }
+                }
+            }
+            
+            
+        }
+        
+    }
+     
+}
+
 void ajouterCandidats(tCase2 *Case, int valeur){
     Case->candidats[valeur] = true;
     Case->nbCandidats++;
       
 }
 
-bool estCandidats(tGrille grille, int valeur, int numLignes , int numColonne  ){
+void retirerCandidats(tCase2 *Case, int valeur){
+    if (Case->candidats[valeur] == true) {
+        Case->candidats[valeur] = false;
+        Case->nbCandidats--;
+    }
+}
+
+void retirerCandidatsColonne(tGrilleCase grilleCase, int numColonne, int valeur) {
+    for (int i = 0; i < TAILLE; i++) {
+        if (grilleCase[i][numColonne].valeur == 0) {
+            retirerCandidats(&grilleCase[i][numColonne], valeur);
+            printf("candidats retirer %d a le place %d %d\n",valeur,i,numColonne);
+        }
+    }
+}
+
+void retirerCandidatsBloc(tGrilleCase grilleCase, int numLigne, int numColonne, int valeur) {
+    int coinLigne = (numLigne / 3) * 3;
+    int coinColonne = (numColonne / 3) * 3;
+
+    for (int i = coinLigne; i < coinLigne + 3; i++) {
+        for (int j = coinColonne; j < coinColonne + 3; j++) {
+            if (grilleCase[i][j].valeur == 0) {
+                retirerCandidats(&grilleCase[i][j], valeur);
+                printf("candidats retirer %d a le place %d %d\n",valeur,i,j);
+            }
+        }
+    }
+}
+
+void retirerCandidatsLigne(tGrilleCase grilleCase, int numLigne, int valeur) {
+    for (int j = 0; j < TAILLE; j++) {
+        if (grilleCase[numLigne][j].valeur == 0) {
+            retirerCandidats(&grilleCase[numLigne][j], valeur);
+            printf("candidats retirer %d a le place %d %d\n",valeur,numLigne,j);
+        }
+    }
+}
+
+bool estCandidats(tGrilleCase grilleCase, int valeur, int numLignes , int numColonne){
     int i, j, coinLigne, coinColonne;
     bool possible = true;
     for (j = 0; j < TAILLE; j++) {
-        if (grille[numLignes][j] == valeur && j != numColonne) {
-            printf("Valeur impossible à placer, elle est déjà présente sur la ligne.\n");
+        if (grilleCase[numLignes][j].valeur == valeur && j != numColonne) {
             possible = false;
         }
     }
@@ -142,8 +236,7 @@ bool estCandidats(tGrille grille, int valeur, int numLignes , int numColonne  ){
     i = 0;
 
     for (i = 0; i < TAILLE; i++) {
-        if (grille[i][numColonne] == valeur && i != numLignes) {
-            printf("Valeur impossible à placer, elle est déjà présente sur la colonne.\n");
+        if (grilleCase[i][numColonne].valeur == valeur && i != numLignes) {
             possible = false;
         }
     }
@@ -153,8 +246,7 @@ bool estCandidats(tGrille grille, int valeur, int numLignes , int numColonne  ){
 
     for (int i = coinLigne; i < coinLigne + 3; i++) {
         for (int j = coinColonne; j < coinColonne + 3; j++) {
-            if (grille[i][j] == valeur && (i != numLignes || j != numColonne)) {
-                printf("Valeur impossible à placer, elle est déjà présente dans le carré 3x3.\n");
+            if (grilleCase[i][j].valeur == valeur && (i != numLignes || j != numColonne)) {
                 possible = false;
             }
         }
@@ -162,19 +254,149 @@ bool estCandidats(tGrille grille, int valeur, int numLignes , int numColonne  ){
     return possible;  
 }
 
-void affecterValeur(tCase2 *Case){
-    int i = 0;
-    while (Case->candidats[i] != true && i < TAILLE)
-    {
-       i++;
+void affecterValeur(tGrille grille, tGrilleCase grilleCase) {
+    for (int i = 0; i < TAILLE; i++) {
+        for (int j = 0; j < TAILLE; j++) {
+            if (grille[i][j] != 0) {
+                grilleCase[i][j].valeur = grille[i][j];
+                initCase(&grilleCase[i][j]);
+            }else{
+                grilleCase[i][j].valeur = 0;
+                initCase(&grilleCase[i][j]);
+            }
+        }
     }
-    Case->valeur = i;
+
     
 }
 
-/*
+void ajouterValeur(tCase2 *Case, tGrilleCase grilleCase, int numLigne, int numColonne) {
+    int i = 1;
+    while (Case->candidats[i] != true && i <= TAILLE) {
+        i++;
+    }
+    Case->valeur = i;
+    retirerCandidats(Case, i);
 
-void afficherStats(){
+    // Mettre à jour la grilleCase et retirer les candidats associés à la nouvelle valeur
+    grilleCase[numLigne][numColonne].valeur = Case->valeur;
+    retirerCandidatsLigne(grilleCase, numLigne, Case->valeur);
+    retirerCandidatsColonne(grilleCase, numColonne, Case->valeur);
+    retirerCandidatsBloc(grilleCase, numLigne, numColonne, Case->valeur);
+}
+
+
+// Fonction singletonCache réintégrée
+void singletonCache(tGrille grille, tGrilleCase grilleCase, int numLigne, int numColonne, int valeur, int *nbCasesVides) {
+    int coinColonne, coinLigne;
+
+    int nbCandidatsTrouves = 0;
+
+    // Vérifie dans la ligne
+    for (int j = 0; j < TAILLE; j++) {
+        if (j != numColonne && grilleCase[numLigne][j].candidats[valeur] == true) {
+            nbCandidatsTrouves++;
+        }
+    }
+
+    // Vérifie dans la colonne
+    for (int i = 0; i < TAILLE; i++) {
+        if (i != numLigne && grilleCase[i][numColonne].candidats[valeur] == true) {
+            nbCandidatsTrouves++;
+        }
+    }
+
+    coinLigne = (numLigne / 3) * 3;
+    coinColonne = (numColonne / 3) * 3;
+
+    // Vérifie dans le bloc
+    for (int i = coinLigne; i < coinLigne + 3; i++) {
+        for (int j = coinColonne; j < coinColonne + 3; j++) {
+            if ((i != numLigne || j != numColonne) && grilleCase[i][j].candidats[valeur] == true) {
+                nbCandidatsTrouves++;
+            }
+        }
+    }
+
+    if (nbCandidatsTrouves == 1 ) {
+        grilleCase[numLigne][numColonne].valeur = valeur;
+        grille[numLigne][numColonne] = grilleCase[numLigne][numColonne].valeur;
+
+        // Retirer le candidat seulement dans la case correspondante
+        for (int val = 1; val <= TAILLE; val++) {
+            if (val != valeur && grilleCase[numLigne][numColonne].candidats[val] == true) {
+                retirerCandidats(&grilleCase[numLigne][numColonne], val);
+            }
+        }
+
+        // Vous pouvez laisser les lignes suivantes si vous les trouvez utiles
+        retirerCandidatsLigne(grilleCase, numLigne, grilleCase[numLigne][numColonne].valeur);
+        retirerCandidatsColonne(grilleCase, numColonne, grilleCase[numLigne][numColonne].valeur);
+        retirerCandidatsBloc(grilleCase, numLigne, numColonne, grilleCase[numLigne][numColonne].valeur);
+
+        /*(*nbCasesVides)--;*/
+
+        printf("Singleton trouvé en %d %d valeur = %d\n", numLigne, numColonne, valeur);
+    }
+}
+
+void singletonCacheLignes(tGrilleCase grilleCase, tCase2 *Case, int numLigne, int valeur) {
+    for (int j = 0; j < TAILLE; j++) {
+        if (j != numLigne && grilleCase[numLigne][j].valeur == 0 && grilleCase[numLigne][j].candidats[valeur] == true) {
+            retirerCandidats(&grilleCase[numLigne][j], valeur);
+        }
+    }
+}
+
+
+
+void singletonCacheColonne(tGrilleCase grilleCase, tCase2 *Case, int numColonne, int valeur) {
+    for (int i = 0; i < TAILLE; i++) {
+        if (i != numColonne && grilleCase[i][numColonne].valeur == 0 && grilleCase[i][numColonne].candidats[valeur] == true) {
+            retirerCandidats(&grilleCase[i][numColonne], valeur);
+        }
+    }
+}
+
+void singletonCacheBloc(tGrilleCase grilleCase, tCase2 *Case, int numLigne, int numColonne, int valeur) {
+    int coinLigne = (numLigne / 3) * 3;
+    int coinColonne = (numColonne / 3) * 3;
+
+    for (int i = coinLigne; i < coinLigne + 3; i++) {
+        for (int j = coinColonne; j < coinColonne + 3; j++) {
+            if ((i != numLigne || j != numColonne) && grilleCase[i][j].valeur == 0 && grilleCase[i][j].candidats[valeur] == true) {
+                retirerCandidats(&grilleCase[i][j], valeur);
+            }
+        }
+    }
+}
+
+
+
+
+/*
+void paireNues (tCase2 *Case){
+    //regarde si il y a une paire
+    int compt = 0;
+    for (int i = 0; i < TAILLE; i++)
+    {
+        if (Case->candidats == true)
+        {
+            compt++;
+        }
+        
+    }
+    //rajouter le fait qu'il faut stocker qu'il y une 2 paire identiaues
+    //rajouter que si compt > 2 ba on enleve du compteur de paire
+    //supprimer cette paire du bloc, de la lignes ou de la colonne
+    
+
+}
+
+
+
+
+void afficherStats(int nbCasesVides){
     
     printf("*********   RESULTATS POUR  ***********");
     printf("nombres de cases remplies = sur     Taux de remplissage =  ");
