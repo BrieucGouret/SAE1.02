@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define N 3
+#define N 4
 #define TAILLE (N * N)
 
 typedef struct {
@@ -127,7 +127,7 @@ void affichageGrille(tGrille g) {
     // affichage des numéros de colonne 
     printf("     ");
     for (int nb = 1; nb <= TAILLE; nb++){
-        if(nb > 3 && nb % N == 3) //c'était 3 avant tqt
+        if(nb > 3 && nb % N == 3) 
         {
             printf(" ");
         }
@@ -164,7 +164,7 @@ void affichageGrille(tGrille g) {
         }
         printf("\n");
 
-        // séparations avec + et - entre les blocs de 3 par 3
+        
         if ((i+1) % N == 0 && i+1 !=TAILLE) 
         {
             printf("    ");
